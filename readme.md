@@ -5,4 +5,18 @@ O objetivo do trabalho é refatorar o [projeto inicial] de projeto da disciplina
 [projeto inicial]: <https://github.com/ghastcmd/projeto-p2>
 
 # Os Code Smells encontrados no código
-* Aqui ficará os code smells encontrados no código
+
+- **Duplicate Code**
+  - Código duplicado na classe **Payroll** na função `add_employee` e `change_employee_type`.
+
+- **Long Line Code** 
+  - Linha de código longo na classe **Employee** na função `__str__`.
+
+- **Primitive Obsession**
+  - A variável **calendar** na classe **PayrollSystem**
+
+- **Long Method**
+  - Na classe **PayrollSystem** na função `change_employee_data`
+
+- **Especulative Generality**
+  - No módulo *payroll* na função `employee_paymethod`
