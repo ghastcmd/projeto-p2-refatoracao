@@ -166,7 +166,7 @@ class PayrollSystem:
         name = employee.name
         address = employee.address
         wage = self.get_employee_wage(employee)
-        special, _, _ = get_schedule_params(employee.payment_schedule)
+        special, _, _ = parse_schedule_params(employee.payment_schedule)
         employee.delete(self.calendar)
 
         new_employee = self.create_employee(type.lower(), name, address, wage, id, self.current_date)
@@ -182,7 +182,7 @@ class PayrollSystem:
         self.employees[index].payment_method = employee_paymethod('deposit in bank account')
 
     def change_payment_schedule(self, id, new_schedule):
-        get_schedule_params(new_schedule)
+        parse_schedule_params(new_schedule)
 
         employee = self.search_employee(id)
         employee.payment_schedule = new_schedule

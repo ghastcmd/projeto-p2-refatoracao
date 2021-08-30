@@ -39,12 +39,12 @@ def get_day_of_week(date, quantity, weekday):
     this_month = calendar.monthcalendar(date.year, date.month)
     this_day = date.day
 
-    location = (0,0)
+    date_location_on_month = (0,0) # get week and day number of current date
     for row, week in enumerate(this_month):
         done = False
         for column, day in enumerate(week):
             if day == this_day:
-                location = (row, column)
+                date_location_on_month = (row, column)
                 done = True
                 break
         if done:
@@ -52,29 +52,29 @@ def get_day_of_week(date, quantity, weekday):
     
     other_day = 0
     outofbounds = False
-    hasalready = this_day >= this_month[location[0]][weekday]
-    haszeros = ~bool(this_month[-1][-1])
+    zero_at_end_of_month = ~bool(this_month[-1][-1])
 
-    index = location[0] - 1 + hasalready
+    day_already_passed_weekday = this_day >= this_month[date_location_on_month[0]][weekday]
+    index = date_location_on_month[0] - 1 + day_already_passed_weekday
     for _ in range(quantity):
         index += 1
         try:
             other_day = this_month[index][weekday]
         except:
             outofbounds = True
-            index = haszeros
+            index = zero_at_end_of_month
         if other_day == 0:
             index = 0
         if other_day == 0 or outofbounds:
             outofbounds = False
             date = next_month(date)
             this_month = calendar.monthcalendar(date.year, date.month)
-            haszeros = ~bool(this_month[-1][-1])
+            zero_at_end_of_month = ~bool(this_month[-1][-1])
             other_day = this_month[index][weekday]
     
     return datetime.date(date.year, date.month, other_day)
 
-def get_schedule_params(entry: str):
+def parse_schedule_params(entry: str):
     func_dict = {
         'monthly': 'monthly', 'weekly': 'weekly',
         'mensalmente': 'monthly', 'semanalmente': 'weekly',
@@ -94,9 +94,9 @@ def get_schedule_params(entry: str):
         'semanalmente': 'weekly 1 friday', 'bi-semanalmente': 'weekly 2 friday'
     }
 
-    special = False
+    special = False # if it's a special case of shceduling
     parsed_entry = entry.split(' ')
-    if len(parsed_entry) == 1:
+    if len(parsed_entry) == 1: # if it have only one word, its a special case
         special = True
         entry = special_dict[entry]
         parsed_entry = entry.split(' ')
@@ -114,7 +114,7 @@ def get_schedule_params(entry: str):
         return special, type_of_schedule, (entry_first_arg, weekday_dict[parsed_entry[2]])
 
 def schedule_paymethod(date: datetime.date, entry: str):
-    _, func_selection, args = get_schedule_params(entry)
+    _, func_selection, args = parse_schedule_params(entry)
 
     func_selection_dict = {
         'monthly': get_day_of_month,
