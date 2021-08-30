@@ -40,7 +40,10 @@ class QueueSystem:
     
     def change_employee_data(self, id, data: dict):
         payroll = self.update_get_payroll()
-        payroll.change_employee_data(id, **data)
+        param_str = ''
+        for key in data:
+            param_str += f'{key} {data[key]} '
+        payroll.change_employee_data(id, param_str.strip())
         self.state_save.append(payroll)
     
     def change_employee_type(self, id, type):

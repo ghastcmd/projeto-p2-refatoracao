@@ -28,7 +28,7 @@ class WageCommand:
         self.employee = employee
     
     def run(self):
-        raise NotImplemented
+        raise NotImplemented()
 
 class WageSalariedCommand(WageCommand):
     def run(self):
@@ -41,6 +41,53 @@ class WageCommissionedCommand(WageCommand):
 class WageHourlyCommand(WageCommand):
     def run(self):
         return self.employee.hourly_wage * 28
+
+
+
+class ChangeDataCommand:
+    def __init__(self, employee: Employee):
+        self.employee = employee
+    
+    def run(self):
+        raise NotImplemented()
+
+class ChangeDataName(ChangeDataCommand):
+    def run(self, name:str):
+        self.employee.name = name
+
+class ChangeDataAddress(ChangeDataCommand):
+    def run(self, address:str):
+        self.employee.address = address
+
+class ChangeDataPaymethod(ChangeDataCommand):
+    def run(self, paymethod:str):
+        self.employee.payment_method = employee_paymethod(paymethod)
+
+class ChangeDataSyndicate(ChangeDataCommand):
+    def run(self, syndicate:bool):
+        self.employee.syndicate = bool(syndicate)
+
+class ChangeDataSyndicateId(ChangeDataCommand):
+    def run(self, syndicate_id:int):
+        self.employee.syndicate_id = int(syndicate_id)
+
+class ChangeDataSyndicateCharge(ChangeDataCommand):
+    def run(self, syndicate_charge:int):
+        self.employee.syndicate_charge = int(syndicate_charge)
+
+def change_data_get_object(name: str):
+    dict = {
+        'name': ChangeDataName,
+        'address': ChangeDataAddress,
+        'payment_method': ChangeDataPaymethod,
+        'syndicate': ChangeDataSyndicate,
+        'syndicate_id': ChangeDataSyndicateId,
+        'syndicate_charge': ChangeDataSyndicateCharge,
+    }
+
+    return dict[name]
+
+
 
 class PayrollSystem:
     current_date = datetime.date.today()
@@ -125,22 +172,19 @@ class PayrollSystem:
     def print_calendar(self):
         self.calendar.print()
 
-    def change_employee_data(self, id: int, name: str = 0, address: str = 0, payment_method: str = 0, syndicate: bool = 0, syndicate_id: int = 0, syndicate_charge: int = 0):
+    def change_employee_data(self, id: int, change_names: str):
         employee = self.search_employee(id)
-        if name:
-            employee.name = name
-        if address:
-            employee.address = address
-        if payment_method:
-            employee.payment_method = employee_paymethod(payment_method)
-        
-        employee.syndicate = syndicate
+        parsed_changes = change_names.split(' ')
 
-        if syndicate_id:
-            employee.syndicate_id = syndicate_id
-        if syndicate_charge:
-            employee.syndicate_charge = syndicate_charge
-    
+        is_first = True
+        for name in parsed_changes:
+            if is_first:
+                change_data_command = change_data_get_object(name)(employee)
+                is_first = False
+            else:
+                change_data_command.run(name)
+                is_first = True
+
     def get_employee_wage(self, employee: Employee):
         obj_dict = {
             'salaried': WageSalariedCommand,

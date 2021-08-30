@@ -32,5 +32,8 @@ O objetivo do trabalho é refatorar o [projeto inicial] de projeto da disciplina
 - **Extract Class**
   - Aplicado no módulo *employee* nas classes `Salaried, Commissioned e Hourly`, para que dois campos paramétricos fossem para a inicialização da super classe.
 
-- **Singleton**
+- **Extract Class**
   - Adicionado uma classe para a anteriormente primitiva classe `calendar` na classe *Payroll*, que antes era feita somente de primitivas, agora está em uma classe separada.
+
+- **Interpreter e Command Design Pattern**
+  - Adicionado um esquema de interpreter no módulo *payroll* na classe **Payroll** na função `change_employee_data`, esquema em que se interpreta uma string dada no terceiro parâmetro, e para executar a linha utiliza-se polimorfismo para a resguarda das funções.
