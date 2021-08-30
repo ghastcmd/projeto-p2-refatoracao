@@ -13,16 +13,18 @@ O objetivo do trabalho é refatorar o [projeto inicial] de projeto da disciplina
   - Linha de código longo na classe **Employee** na função `__str__`.
 
 - **Primitive Obsession**
-  - A variável **calendar** na classe **PayrollSystem**
+  - A variável **calendar** na classe **PayrollSystem**.
 
 - **Long Method**
-  - Na classe **PayrollSystem** na função `change_employee_data`
+  - Na classe **PayrollSystem** na função `change_employee_data`.
 
 - **Especulative Generality**
-  - No módulo *payroll* na função `employee_paymethod`
+  - No módulo *payroll* na função `employee_paymethod`.
 
 # Os novos design patterns aplicados no sistema
 
 - **Command design pattern**
-  - No módulo *payroll* na função `get_employee_wage`, foi adicionado o novo design pattern
+  - No módulo *payroll* na função `get_employee_wage`, foi adicionado o novo design pattern.
 
+- **Extract Method**
+  - No módulo *payroll* na função `change_employee_type` e `add_employee` havia código duplicado, sanado com uma nova função.

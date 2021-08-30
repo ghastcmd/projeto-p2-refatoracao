@@ -72,17 +72,22 @@ class PayrollSystem:
         for i, employee in enumerate(self.employees):
             print(f'{i}: {employee}')
 
+    def create_employee(self, type, name, address, attr, id, date):
+        types_to_obj = {
+            'salaried': Salaried, 
+            'commissioned': Commissioned, 
+            'hourly': Hourly
+        }
+
+        return types_to_obj[type](name, address, attr, id, date)
+
     def add_employee(self, name: str, address: str, type: str, attr: int):
         types = ['salaried', 'commissioned', 'hourly']
         assert type in types
 
-        if type == 'salaried':
-            self.employees.append(Salaried(name, address, attr, self.count))
-        elif type == 'commissioned':
-            self.employees.append(Commissioned(name, address, attr, self.current_date, self.count))
-        elif type == 'hourly':
-            self.employees.append(Hourly(name, address, attr, self.count))
-        
+        new_employee = self.create_employee(type, name, address, attr, self.count, self.current_date)
+        self.employees.append(new_employee)
+
         self.employees[-1].generate_schedule_paymethod(self.current_date, self.calendar)
         self.employees[-1].payment_method = employee_paymethod('deposit in bank account')
 
@@ -164,13 +169,9 @@ class PayrollSystem:
         special, _, _ = get_schedule_params(employee.payment_schedule)
         employee.delete(self.calendar)
 
-        if type.lower() == 'salaried':
-            self.employees[index] = Salaried(name, address, wage, id)
-        elif type.lower() == 'commissioned':
-            self.employees[index] = Commissioned(name, address, wage, self.current_date, id)
-        elif type.lower() == 'hourly':
-            self.employees[index] = Hourly(name, address, wage, id)
-        
+        new_employee = self.create_employee(type.lower(), name, address, wage, id, self.current_date)
+        self.employees[index] = new_employee
+
         if not special:
             self.employees[index].payment_schedule = employee.payment_schedule
         

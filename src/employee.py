@@ -129,7 +129,7 @@ def add_schedule_date(id: int, date: datetime.date, current_calendar):
     current_calendar[hash_date(date)]['schedule'].append(id)
 
 class Employee:
-    def __init__(self, name: str, address: str, id: int = 0):
+    def __init__(self, name: str, address: str, id: int = 0, date: datetime.date = 0):
         self.name = name
         self.address = address
 
@@ -169,7 +169,7 @@ class Employee:
         raise NotImplementedError()
 
 class Salaried(Employee):
-    def __init__(self, name, address, monthly_wage, id = 0):
+    def __init__(self, name, address, monthly_wage, id = 0, date = 0):
         super().__init__(name, address, id)
 
         self.type = 'Salaried'
@@ -184,7 +184,7 @@ class Salaried(Employee):
         super().generate_schedule_paymethod(current_date, current_calendar)
 
 class Commissioned(Employee):
-    def __init__(self, name, address, commission, date, id = 0):
+    def __init__(self, name, address, commission, id = 0, date = 0):
         super().__init__(name, address, id)
 
         self.type = 'Commissioned'
@@ -215,7 +215,7 @@ class Commissioned(Employee):
         super().generate_schedule_paymethod(current_date, current_calendar)
 
 class Hourly(Employee):
-    def __init__(self, name, address, hour_wage, id = 0):
+    def __init__(self, name, address, hour_wage, id = 0, date = 0):
         super().__init__(name, address, id)
 
         self.type = 'Hourly'
