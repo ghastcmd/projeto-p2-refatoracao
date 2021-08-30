@@ -23,6 +23,26 @@ def employee_paymethod(paymethod):
 
     return paymethod_dict[unidecode(paymethod.lower())]
 
+class WageCommand:
+    def __init__(self, employee: Employee):
+        self.employee = employee
+    
+    def run(self):
+        raise NotImplemented
+
+class WageSalariedCommand(WageCommand):
+    def run(self):
+        return self.employee.monthly_wage
+
+class WageCommissionedCommand(WageCommand):
+    def run(self):
+        return self.employee.base_salary
+
+class WageHourlyCommand(WageCommand):
+    def run(self):
+        return self.employee.hourly_wage * 28
+
+
 
 class PayrollSystem:
     current_date = datetime.date.today()
@@ -123,12 +143,14 @@ class PayrollSystem:
             employee.syndicate_charge = syndicate_charge
     
     def get_employee_wage(self, employee: Employee):
-        if employee.type.lower() == 'salaried':
-            return employee.monthly_wage
-        elif employee.type.lower() == 'commissioned':
-            return employee.base_salary
-        elif employee.type.lower() == 'hourly':
-            return employee.hourly_wage * 28
+        obj_dict = {
+            'salaried': WageSalariedCommand,
+            'commissioned': WageCommissionedCommand,
+            'hourly': WageHourlyCommand
+        }
+        
+        get_wage = obj_dict[employee.type.lower()](employee)
+        return get_wage.run()
 
     def change_employee_type(self, id, type):
         type_arr = ['salaried', 'commissioned', 'hourly']

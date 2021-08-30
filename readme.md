@@ -20,3 +20,9 @@ O objetivo do trabalho é refatorar o [projeto inicial] de projeto da disciplina
 
 - **Especulative Generality**
   - No módulo *payroll* na função `employee_paymethod`
+
+# Os novos design patterns aplicados no sistema
+
+- **Command design pattern**
+  - No módulo *payroll* na função `get_employee_wage`, foi adicionado o novo design pattern
+
