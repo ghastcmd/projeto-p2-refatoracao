@@ -31,3 +31,6 @@ O objetivo do trabalho é refatorar o [projeto inicial] de projeto da disciplina
 
 - **Extract Class**
   - Aplicado no módulo *employee* nas classes `Salaried, Commissioned e Hourly`, para que dois campos paramétricos fossem para a inicialização da super classe.
+
+- **Singleton**
+  - Adicionado uma classe para a anteriormente primitiva classe `calendar` na classe *Payroll*, que antes era feita somente de primitivas, agora está em uma classe separada.

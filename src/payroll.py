@@ -42,30 +42,26 @@ class WageHourlyCommand(WageCommand):
     def run(self):
         return self.employee.hourly_wage * 28
 
-
-
 class PayrollSystem:
     current_date = datetime.date.today()
 
     def __init__(self):
         self.count = 1
         self.employees = []
-        self.calendar = {}
-        for i in range(366):
-            self.calendar[i] = {'schedule': [], 'update': []}
+        self.calendar = PCalendar()
 
-        self.current_day = self.calendar[hash_date(self.current_date)]
+        self.current_day = self.calendar.get_day(self.current_date)
 
     def run_today_payroll(self):
-        iter_thru = [(i,x) for i, x in enumerate(self.calendar[hash_date(self.current_date)]['schedule'])]
+        iter_thru = [(i,x) for i, x in enumerate(self.calendar.get_day(self.current_date)['schedule'])]
         for i, id in reversed(iter_thru):
             employee = self.search_employee(id)
             employee.generate_payment(self.current_date, self.calendar)
-            del self.calendar[hash_date(self.current_date)]['schedule'][i]
+            del self.calendar.get_day(self.current_date)['schedule'][i]
 
     def update_day(self, add_days = 1):
         self.current_date += datetime.timedelta(days=add_days)
-        self.current_day = self.calendar[hash_date(self.current_date)]
+        self.current_day = self.calendar.get_day(self.current_date)
 
     def print_vals(self):
         print('------------ list of employees -------------')
@@ -114,10 +110,11 @@ class PayrollSystem:
     def launch_sell_result(self, id: int, price: int, date = current_date):
         if date == 'current':
             date = self.current_date
+
         employee = self.search_employee(id)
         if employee.type != 'Commissioned':
             raise Exception('Incorrect employee type')
-        self.calendar[hash_date(date)]['update'].append(('selling', employee.id, price))
+        self.calendar.get_day(date)['update'].append(('selling', employee.id, price))
 
     # charge must be a whole value, not a percentage of wage
     def launch_service_charge(self, id: int, charge: int):
@@ -126,10 +123,7 @@ class PayrollSystem:
         employee.owing(charge)
 
     def print_calendar(self):
-        print('---------------- calendar ------------------')
-        for key in self.calendar:
-            if self.calendar[key] != {'schedule':[], 'update':[]}:
-                print(str(key) + ':', self.calendar[key])
+        self.calendar.print()
 
     def change_employee_data(self, id: int, name: str = 0, address: str = 0, payment_method: str = 0, syndicate: bool = 0, syndicate_id: int = 0, syndicate_charge: int = 0):
         employee = self.search_employee(id)
@@ -166,7 +160,7 @@ class PayrollSystem:
         name = employee.name
         address = employee.address
         wage = self.get_employee_wage(employee)
-        special, _, _ = parse_schedule_params(employee.payment_schedule)
+        special, _, _ = PCalendar.parse_schedule_params(employee.payment_schedule)
         employee.delete(self.calendar)
 
         new_employee = self.create_employee(type.lower(), name, address, wage, id, self.current_date)
@@ -182,7 +176,7 @@ class PayrollSystem:
         self.employees[index].payment_method = employee_paymethod('deposit in bank account')
 
     def change_payment_schedule(self, id, new_schedule):
-        parse_schedule_params(new_schedule)
+        PCalendar.parse_schedule_params(new_schedule)
 
         employee = self.search_employee(id)
         employee.payment_schedule = new_schedule
