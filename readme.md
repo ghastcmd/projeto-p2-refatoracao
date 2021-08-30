@@ -28,3 +28,6 @@ O objetivo do trabalho é refatorar o [projeto inicial] de projeto da disciplina
 
 - **Extract Method**
   - No módulo *payroll* na função `change_employee_type` e `add_employee` havia código duplicado, sanado com uma nova função.
+
+- **Extract Class**
+  - Aplicado no módulo *employee* nas classes `Salaried, Commissioned e Hourly`, para que dois campos paramétricos fossem para a inicialização da super classe.

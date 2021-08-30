@@ -129,13 +129,14 @@ def add_schedule_date(id: int, date: datetime.date, current_calendar):
     current_calendar[hash_date(date)]['schedule'].append(id)
 
 class Employee:
-    def __init__(self, name: str, address: str, id: int = 0, date: datetime.date = 0):
+    def __init__(self, name: str, address: str, type:str, payment_schedule:str, id: int = 0):
         self.name = name
         self.address = address
 
-        self.payment_schedule = ''
+        self.type = type
+        self.payment_schedule = payment_schedule
+
         self.payment_method = ''
-        self.type = ''
         self.syndicate = False
         self.syndicate_id = 0
         self.syndicate_charge = 0
@@ -170,10 +171,7 @@ class Employee:
 
 class Salaried(Employee):
     def __init__(self, name, address, monthly_wage, id = 0, date = 0):
-        super().__init__(name, address, id)
-
-        self.type = 'Salaried'
-        self.payment_schedule = 'monthly'
+        super().__init__(name, address, 'Salaried', 'monthly', id)
 
         self.monthly_wage = monthly_wage
 
@@ -185,10 +183,7 @@ class Salaried(Employee):
 
 class Commissioned(Employee):
     def __init__(self, name, address, commission, id = 0, date = 0):
-        super().__init__(name, address, id)
-
-        self.type = 'Commissioned'
-        self.payment_schedule = 'bi-weekly'
+        super().__init__(name, address, 'Commissioned', 'bi-weekly', id)
 
         self.base_salary = 900
         self.added_price = 0
@@ -216,10 +211,8 @@ class Commissioned(Employee):
 
 class Hourly(Employee):
     def __init__(self, name, address, hour_wage, id = 0, date = 0):
-        super().__init__(name, address, id)
+        super().__init__(name, address, 'Hourly', 'weekly', id)
 
-        self.type = 'Hourly'
-        self.payment_schedule = 'weekly'
         self.hour_wage = hour_wage
         self.added_wage = 0
 
