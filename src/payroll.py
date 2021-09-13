@@ -147,6 +147,7 @@ class PayrollSystem:
         return employee
 
     def search_employee_index(self, id: int):
+        index = 0
         try:
             index, employee = next((i, x) for i, x in enumerate(self.employees) if x.id == id)
         except:
@@ -155,7 +156,12 @@ class PayrollSystem:
         return index, employee
 
     def search_get_id_by_name(self, name: str):
-        return next(x.id for x in self.employees if x.name == name)
+        try:
+            employee = next(x.id for x in self.employees if x.name == name)
+        except:
+            print('Invalid employee name')
+            employee = None
+        return employee
 
     def del_employee(self, id: int):
         index, employee = self.search_employee_index(id)
@@ -168,18 +174,24 @@ class PayrollSystem:
         employee = self.search_employee(id)
         if employee == None:
             return
+        if employee.type != 'hourly':
+            print('Need to be a hourly type of employee')
+            return
         employee.add_hourwage(hours)
 
     def launch_sell_result(self, id: int, price: int, date = current_date):
         if date == 'current':
             date = self.current_date
+        else:
+            date = datetime.datetime.strptime(date, '%d/%m/%Y')
 
         employee = self.search_employee(id)
         if employee == None:
             return
+        if employee.type != 'commissioned':
+            print('Need to be a commissioned type of employee')
+            return
 
-        if employee.type != 'Commissioned':
-            raise Exception('Incorrect employee type')
         self.calendar.get_day(date)['update'].append(('selling', employee.id, price))
 
     # charge must be a whole value, not a percentage of wage
@@ -187,8 +199,10 @@ class PayrollSystem:
         employee = self.search_employee(id)
         if employee == None:
             return
-        
-        assert employee.syndicate == True
+        if employee.syndicate != True:
+            print('The employee need to be in the syndicate')
+            return
+
         employee.owing(charge)
 
     def print_calendar(self):

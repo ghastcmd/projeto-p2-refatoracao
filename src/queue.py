@@ -76,7 +76,10 @@ class QueueSystem:
         self.last_payroll().print_calendar()
 
     def search_by_name(self, name: str):
-        return self.last_payroll().search_get_id_by_name(name)
+        employee = self.last_payroll().search_get_id_by_name(name)
+        if employee == None:
+            return ""
+        return employee
     
     def overwrite_undo(self):
         if self.current_index != len(self.state_save):

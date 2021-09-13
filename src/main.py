@@ -46,9 +46,6 @@ def list_commands():
 
     print('Para sair do programa:\n  exit\n')
 
-def invalid_command():
-    print('Invalid command, type help for usage')
-
 def invalid_employee_type():
     print('Invalid employee type')
     print('  Available types: salaried, hourly, commissioned')
@@ -102,7 +99,13 @@ class AddDispatch(MainDispatch):
         if type not in types:
             invalid_employee_type()
         else:
-            system.add_employee(arr[0], new_str, type, int(arr[-1]))
+            try:
+                n = int(arr[-1])
+            except:
+                print('Invalid parameter number')
+                return
+
+            system.add_employee(arr[0], new_str, type, n)
 
 class DelDispatch(MainDispatch):
     def run(arr: list):
@@ -224,18 +227,24 @@ if __name__ == '__main__':
     cli.add(ChangeEmployeeTypeDispatch, 'change employee type', 5)
     cli.add(ChangePaymentScheduleDispatch, 'change payment schedule', 4, True)
 
-    test_string = 'launch timecard 5 9'
     while True:
         input_str = input('> ')
         input_split = input_str.split(' ')
 
+        gotten = False
         for spec in cli.list:
-            # print(spec.command)
             if spec.is_command(input_str):
                 if spec.is_satisfied(len(input_split)):
+                    gotten = True
                     word_count = spec.get_command_word_count()
+
+                    print(input_split[word_count:])
+
                     spec.get_dispatch().run(input_split[word_count:])
                 break
+        if gotten == False:
+            print('Invalid command, type help for usage')
+
     
     exit()
     system.add_employee('simple', 'via st. 11', 'salaried', 1230)
