@@ -118,7 +118,6 @@ class RunPayrollDispatch(MainDispatch):
 
 class LaunchTimecardDispatch(MainDispatch):
     def run(arr: list):
-        print(int(arr[0]), int(arr[1]))
         system.launch_timecard(int(arr[0]), int(arr[1]))
 
 class LaunchServiceChargeDispatch(MainDispatch):
@@ -131,7 +130,7 @@ class LaunchSellResultDispatch(MainDispatch):
 
 class ChangeEmployeeDataDispatch(MainDispatch):
     def run(arr: list):
-        system.change_employee_data(int(arr[0]), {arr[1]: unify_string(5, len(arr), arr)})
+        system.change_employee_data(int(arr[0]), {arr[1]: unify_string(2, len(arr), arr)})
 
 class ChangeEmployeeTypeDispatch(MainDispatch):
     def run(arr: list):
@@ -226,22 +225,17 @@ if __name__ == '__main__':
     cli.add(ChangePaymentScheduleDispatch, 'change payment schedule', 4, True)
 
     test_string = 'launch timecard 5 9'
-    test_string_split = test_string.split(' ')
-    for spec in cli.list:
-        # print(spec.command)
-        if spec.is_command(test_string):
-            if spec.is_satisfied(len(test_string_split)):
-                word_count = spec.get_command_word_count()
-                print(test_string_split[word_count:])
-                try:
-                    spec.get_dispatch().run(test_string_split[word_count:])
-                except:
-                    invalid_command()
-            break
+    while True:
+        input_str = input('> ')
+        input_split = input_str.split(' ')
 
-    exit()
-
-    
+        for spec in cli.list:
+            # print(spec.command)
+            if spec.is_command(input_str):
+                if spec.is_satisfied(len(input_split)):
+                    word_count = spec.get_command_word_count()
+                    spec.get_dispatch().run(input_split[word_count:])
+                break
     
     exit()
     system.add_employee('simple', 'via st. 11', 'salaried', 1230)

@@ -88,6 +88,8 @@ def change_data_get_object(name: str):
     return dict[name]
 
 
+def invalid_employee_id():
+    print('Invalid employee id, use list to see employee or search <name>')
 
 class PayrollSystem:
     current_date = datetime.date.today()
@@ -137,21 +139,35 @@ class PayrollSystem:
         self.count += 1
 
     def search_employee(self, id: int):
-        return next(x for x in self.employees if x.id == id)
+        try:
+            employee = next(x for x in self.employees if x.id == id)
+        except:
+            invalid_employee_id()
+            employee = None
+        return employee
 
     def search_employee_index(self, id: int):
-        return next((i, x) for i, x in enumerate(self.employees) if x.id == id)
+        try:
+            index, employee = next((i, x) for i, x in enumerate(self.employees) if x.id == id)
+        except:
+            invalid_employee_id()
+            employee = None
+        return index, employee
 
     def search_get_id_by_name(self, name: str):
         return next(x.id for x in self.employees if x.name == name)
 
     def del_employee(self, id: int):
-        index, _ = self.search_employee_index(id)
+        index, employee = self.search_employee_index(id)
+        if employee == None:
+            return
         self.employees[index].delete(self.calendar)
         del self.employees[index]
 
     def launch_timecard(self, id: int, hours: int):
         employee = self.search_employee(id)
+        if employee == None:
+            return
         employee.add_hourwage(hours)
 
     def launch_sell_result(self, id: int, price: int, date = current_date):
@@ -159,6 +175,9 @@ class PayrollSystem:
             date = self.current_date
 
         employee = self.search_employee(id)
+        if employee == None:
+            return
+
         if employee.type != 'Commissioned':
             raise Exception('Incorrect employee type')
         self.calendar.get_day(date)['update'].append(('selling', employee.id, price))
@@ -166,6 +185,9 @@ class PayrollSystem:
     # charge must be a whole value, not a percentage of wage
     def launch_service_charge(self, id: int, charge: int):
         employee = self.search_employee(id)
+        if employee == None:
+            return
+        
         assert employee.syndicate == True
         employee.owing(charge)
 
@@ -174,16 +196,13 @@ class PayrollSystem:
 
     def change_employee_data(self, id: int, change_names: str):
         employee = self.search_employee(id)
+        if employee == None:
+            return
+        
         parsed_changes = change_names.split(' ')
-
-        is_first = True
-        for name in parsed_changes:
-            if is_first:
-                change_data_command = change_data_get_object(name)(employee)
-                is_first = False
-            else:
-                change_data_command.run(name)
-                is_first = True
+        
+        change_data_command = change_data_get_object(parsed_changes[0])(employee)
+        change_data_command.run(change_names[len(parsed_changes[0]) + 1:])
 
     def get_employee_wage(self, employee: Employee):
         obj_dict = {
@@ -201,6 +220,9 @@ class PayrollSystem:
         assert type.lower() in type_arr
 
         index, employee = self.search_employee_index(id)
+        if employee == None:
+            return
+        
         name = employee.name
         address = employee.address
         wage = self.get_employee_wage(employee)
@@ -223,4 +245,7 @@ class PayrollSystem:
         PCalendar.parse_schedule_params(new_schedule)
 
         employee = self.search_employee(id)
+        if employee == None:
+            return
+        
         employee.payment_schedule = new_schedule
