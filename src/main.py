@@ -59,6 +59,58 @@ def unify_string(first, last, arr):
         ret_str += arr[i] + ' '
     return ret_str.strip()
 
+class Spec:
+    def __init__(self, command: str, lenght: int, is_ge: bool):
+        self.command = command
+        self.len_command = len(command)
+        self.word_count_command = len(command.split(' '))
+        self.len = lenght
+    
+        self.is_equal = not is_ge
+
+    def is_satisfied(self, len: int):
+        if self.is_equal:
+            return len == self.len
+        else:
+            return len >= self.len
+    
+    def is_command(self, input_string: str):
+        len_input_string = len(input_string)
+        if len(input_string) < self.len_command:
+            return False
+        for i, ch in enumerate(self.command):
+            if input_string[i] != ch:
+                return False
+
+        try:
+            after_last_character = input_string[self.len_command]
+        except:
+            after_last_character = ' '
+        if after_last_character == ' ':
+            return True
+        else:
+            return False
+
+    def get_command_word_count(self):
+        return self.word_count_command
+
+    def test():
+        another = Spec('anothe', 1, False)
+        assert False == another.is_command('another command')
+        assert False == another.is_command('another')
+        assert False == another.is_command('another ')
+        assert True == another.is_command('anothe')
+        assert False == another.is_command('anot')
+        assert True == another.is_command('anothe this is the new shit')
+        assert False == another.is_command('this anothe is the new shit')
+
+class CommandParser:
+    def __init__(self):
+        self.list = []
+    
+    def add(self, command: str, len: int, is_ge: bool = False):
+        self.list.append(Spec(command, len, is_ge))
+
 if __name__ == '__main__':
     system = QueueSystem()
 
@@ -66,6 +118,38 @@ if __name__ == '__main__':
     print('Para obter ajuda, digite o comando help')
 
     types = ['salaried', 'hourly', 'commissioned']
+
+    cli = CommandParser()
+    cli.add('exit', 1)
+    cli.add('help', 1)
+    cli.add('list', 1)
+    cli.add('undo', 1)
+    cli.add('redo', 1)
+    cli.add('calendar', 1)
+    cli.add('search', 2)
+    cli.add('add', 5, True)
+    cli.add('del', 2)
+    cli.add('del', 2)
+    cli.add('run payroll', 2)
+    cli.add('launch timecard', 4)
+    cli.add('launch service charge', 5)
+    cli.add('launch sell result', 6)
+    cli.add('change employee data', 6, True)
+    cli.add('change employee type', 5)
+    cli.add('change payment schedule', 4, True)
+
+    test_string = 'launch timecard 5 9'
+    test_string_split = test_string.split(' ')
+    for spec in cli.list:
+        # print(spec.command)
+        if spec.is_command(test_string):
+            if spec.is_satisfied(len(test_string_split)):
+                word_count = spec.get_command_word_count()
+                print(test_string_split[word_count:])
+            break
+            
+
+    exit()
 
     while True:
         uin = input('> ')
