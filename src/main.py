@@ -107,6 +107,7 @@ class AddDispatch(MainDispatch):
 
             system.add_employee(arr[0], new_str, type, n)
 
+# TODO Exception handling of id
 class DelDispatch(MainDispatch):
     def run(arr: list):
         system.del_employee(int(arr[0]))
@@ -119,22 +120,27 @@ class RunPayrollDispatch(MainDispatch):
     def run(arr: list):
         system.run_today_payroll()
 
+# TODO exception handling of id and hours
 class LaunchTimecardDispatch(MainDispatch):
     def run(arr: list):
         system.launch_timecard(int(arr[0]), int(arr[1]))
 
+# TODO exception handling of id and charge
 class LaunchServiceChargeDispatch(MainDispatch):
     def run(arr: list):
         system.launch_service_charge(int(arr[0]), int(arr[1]))
 
+# TODO exception handling of id and selling result
 class LaunchSellResultDispatch(MainDispatch):
     def run(arr: list):
         system.launch_selling(int(arr[0]), int(arr[1]), arr[2])
 
+# TODO exception handling of id 
 class ChangeEmployeeDataDispatch(MainDispatch):
     def run(arr: list):
         system.change_employee_data(int(arr[0]), {arr[1]: unify_string(2, len(arr), arr)})
 
+# TODO exception handling of id
 class ChangeEmployeeTypeDispatch(MainDispatch):
     def run(arr: list):
         type = arr[1].lower()
@@ -143,6 +149,7 @@ class ChangeEmployeeTypeDispatch(MainDispatch):
         else:
             system.change_employee_type(int(arr[0]), type)
 
+# TODO exception handling of id
 class ChangePaymentScheduleDispatch(MainDispatch):
     def run(self, arr: list):
         system.change_payment_schedule(int(arr[0]), unify_string(4, len(arr), arr))

@@ -174,7 +174,7 @@ class PayrollSystem:
         employee = self.search_employee(id)
         if employee == None:
             return
-        if employee.type != 'hourly':
+        if employee.type != 'Hourly':
             print('Need to be a hourly type of employee')
             return
         employee.add_hourwage(hours)
@@ -188,7 +188,7 @@ class PayrollSystem:
         employee = self.search_employee(id)
         if employee == None:
             return
-        if employee.type != 'commissioned':
+        if employee.type != 'Commissioned':
             print('Need to be a commissioned type of employee')
             return
 
