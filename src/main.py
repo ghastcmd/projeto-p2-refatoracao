@@ -53,20 +53,107 @@ def invalid_employee_type():
     print('Invalid employee type')
     print('  Available types: salaried, hourly, commissioned')
 
+system = QueueSystem()
+
+types = ['salaried', 'commissioned', 'hourly']
+
 def unify_string(first, last, arr):
     ret_str = ''
     for i in range(first, last):
         ret_str += arr[i] + ' '
     return ret_str.strip()
 
+class MainDispatch:
+    def run():
+        raise NotImplemented()
+
+class ExitDispatch(MainDispatch):
+    def run(arr: list):
+        exit()
+
+class HelpDispatch(MainDispatch):
+    def run(arr: list):
+        list_commands()
+
+class ListDispatch(MainDispatch):
+    def run(arr: list):
+        system.print_payroll()
+
+class UndoDispatch(MainDispatch):
+    def run(arr: list):
+        system.undo()
+
+class RedoDispatch(MainDispatch):
+    def run(arr: list):
+        system.redo()
+
+class CalendarDispatch(MainDispatch):
+    def run(arr: list):
+        system.print_payroll_calendar()
+
+class SearchDispatch(MainDispatch):
+    def run(arr: list):
+        print(system.search_by_name(arr[0]))
+
+class AddDispatch(MainDispatch):
+    def run(arr: list):
+        new_str = unify_string(1, len(arr) - 2, arr)
+        type = arr[-2].lower()
+        if type not in types:
+            invalid_employee_type()
+        else:
+            system.add_employee(arr[0], new_str, type, int(arr[-1]))
+
+class DelDispatch(MainDispatch):
+    def run(arr: list):
+        system.del_employee(int(arr[0]))
+
+class RunPayrollDispatch(MainDispatch):
+    def run(arr: list):
+        system.run_today_payroll()
+
+class RunPayrollDispatch(MainDispatch):
+    def run(arr: list):
+        system.run_today_payroll()
+
+class LaunchTimecardDispatch(MainDispatch):
+    def run(arr: list):
+        print(int(arr[0]), int(arr[1]))
+        system.launch_timecard(int(arr[0]), int(arr[1]))
+
+class LaunchServiceChargeDispatch(MainDispatch):
+    def run(arr: list):
+        system.launch_service_charge(int(arr[0]), int(arr[1]))
+
+class LaunchSellResultDispatch(MainDispatch):
+    def run(arr: list):
+        system.launch_selling(int(arr[0]), int(arr[1]), arr[2])
+
+class ChangeEmployeeDataDispatch(MainDispatch):
+    def run(arr: list):
+        system.change_employee_data(int(arr[0]), {arr[1]: unify_string(5, len(arr), arr)})
+
+class ChangeEmployeeTypeDispatch(MainDispatch):
+    def run(arr: list):
+        type = arr[1].lower()
+        if type not in types:
+            invalid_employee_type()
+        else:
+            system.change_employee_type(int(arr[0]), type)
+
+class ChangePaymentScheduleDispatch(MainDispatch):
+    def run(self, arr: list):
+        system.change_payment_schedule(int(arr[0]), unify_string(4, len(arr), arr))
+
 class Spec:
-    def __init__(self, command: str, lenght: int, is_ge: bool):
+    def __init__(self, dispatch: MainDispatch, command: str, lenght: int, is_ge: bool):
         self.command = command
         self.len_command = len(command)
         self.word_count_command = len(command.split(' '))
         self.len = lenght
     
         self.is_equal = not is_ge
+        self.dispatch = dispatch
 
     def is_satisfied(self, len: int):
         if self.is_equal:
@@ -90,9 +177,12 @@ class Spec:
             return True
         else:
             return False
-
+    
     def get_command_word_count(self):
         return self.word_count_command
+
+    def get_dispatch(self):
+        return self.dispatch
 
     def test():
         another = Spec('anothe', 1, False)
@@ -108,35 +198,32 @@ class CommandParser:
     def __init__(self):
         self.list = []
     
-    def add(self, command: str, len: int, is_ge: bool = False):
-        self.list.append(Spec(command, len, is_ge))
+    def add(self, dispatch: MainDispatch, command: str, len: int, is_ge: bool = False):
+        self.list.append(Spec(dispatch, command, len, is_ge))
 
 if __name__ == '__main__':
-    system = QueueSystem()
-
     print('Bem vindos ao sistema de folha de pagamento')
     print('Para obter ajuda, digite o comando help')
 
     types = ['salaried', 'hourly', 'commissioned']
 
     cli = CommandParser()
-    cli.add('exit', 1)
-    cli.add('help', 1)
-    cli.add('list', 1)
-    cli.add('undo', 1)
-    cli.add('redo', 1)
-    cli.add('calendar', 1)
-    cli.add('search', 2)
-    cli.add('add', 5, True)
-    cli.add('del', 2)
-    cli.add('del', 2)
-    cli.add('run payroll', 2)
-    cli.add('launch timecard', 4)
-    cli.add('launch service charge', 5)
-    cli.add('launch sell result', 6)
-    cli.add('change employee data', 6, True)
-    cli.add('change employee type', 5)
-    cli.add('change payment schedule', 4, True)
+    cli.add(ExitDispatch, 'exit', 1)
+    cli.add(HelpDispatch, 'help', 1)
+    cli.add(ListDispatch, 'list', 1)
+    cli.add(UndoDispatch, 'undo', 1)
+    cli.add(RedoDispatch, 'redo', 1)
+    cli.add(CalendarDispatch, 'calendar', 1)
+    cli.add(SearchDispatch, 'search', 2)
+    cli.add(AddDispatch, 'add', 5, True)
+    cli.add(DelDispatch, 'del', 2)
+    cli.add(RunPayrollDispatch, 'run payroll', 2)
+    cli.add(LaunchTimecardDispatch, 'launch timecard', 4)
+    cli.add(LaunchServiceChargeDispatch, 'launch service charge', 5)
+    cli.add(LaunchSellResultDispatch, 'launch sell result', 6)
+    cli.add(ChangeEmployeeDataDispatch, 'change employee data', 6, True)
+    cli.add(ChangeEmployeeTypeDispatch, 'change employee type', 5)
+    cli.add(ChangePaymentScheduleDispatch, 'change payment schedule', 4, True)
 
     test_string = 'launch timecard 5 9'
     test_string_split = test_string.split(' ')
@@ -146,59 +233,15 @@ if __name__ == '__main__':
             if spec.is_satisfied(len(test_string_split)):
                 word_count = spec.get_command_word_count()
                 print(test_string_split[word_count:])
+                try:
+                    spec.get_dispatch().run(test_string_split[word_count:])
+                except:
+                    invalid_command()
             break
-            
 
     exit()
 
-    while True:
-        uin = input('> ')
-        uin = uin.strip().split(' ')
-        uinl = len(uin)
-        
-        if uinl == 1 and uin[0] == 'exit':
-            break
-        elif uinl == 1 and uin[0] == 'help':
-            list_commands()
-        elif uinl == 1 and uin[0] == 'list':
-            system.print_payroll()
-        elif uinl == 1 and uin[0] == 'undo':
-            system.undo()
-        elif uinl == 1 and uin[0] == 'redo':
-            system.redo()
-        elif uinl == 1 and uin[0] == 'calendar':
-            system.print_payroll_calendar()
-        elif uinl == 2 and uin[0] == 'search':
-            print(system.search_by_name(uin[1]))
-        elif uinl >= 5 and uin[0] == 'add':
-            new_str = unify_string(2, uinl - 2, uin)
-            type = uin[-2].lower()
-            if type not in types:
-                invalid_employee_type()
-                continue
-            system.add_employee(uin[1], new_str, type, int(uin[-1]))
-        elif uinl == 2 and uin[0] == 'del':
-            system.del_employee(int(uin[1]))
-        elif uinl == 2 and unify_string(0, 2, uin) == 'run payroll':
-            system.run_today_payroll()
-        elif uinl == 4 and unify_string(0, 2, uin) == 'launch timecard':
-            system.launch_timecard(int(uin[2]), int(uin[3]))
-        elif uinl == 5 and unify_string(0, 3, uin) == 'launch service charge':
-            system.launch_service_charge(int(uin[3]), int(uin[4]))
-        elif uinl == 6 and unify_string(0, 3, uin) == 'launch sell result':
-            system.launch_selling(int(uin[3]), int(uin[4]), uin[5])
-        elif uinl >= 6 and unify_string(0, 3, uin) == 'change employee data':
-            system.change_employee_data(int(uin[3]), {uin[4]: unify_string(5, uinl, uin)})
-        elif uinl == 5 and unify_string(0, 3, uin) == 'change employee type':
-            type = uin[4].lower()
-            if type not in types:
-                invalid_employee_type()
-                continue
-            system.change_employee_type(int(uin[3]), type)
-        elif uinl >= 4 and unify_string(0, 3, uin) == 'change payment schedule':
-            system.change_payment_schedule(int(uin[3]), unify_string(4, uinl, uin))
-        else:
-            invalid_command()
+    
     
     exit()
     system.add_employee('simple', 'via st. 11', 'salaried', 1230)
