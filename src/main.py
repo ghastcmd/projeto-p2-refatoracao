@@ -107,10 +107,14 @@ class AddDispatch(MainDispatch):
 
             system.add_employee(arr[0], new_str, type, n)
 
-# TODO Exception handling of id
 class DelDispatch(MainDispatch):
     def run(arr: list):
-        system.del_employee(int(arr[0]))
+        try:
+            id = int(arr[0])
+        except:
+            print('Invalid values, must be integer')
+            return
+        system.del_employee(id)
 
 class RunPayrollDispatch(MainDispatch):
     def run(arr: list):
@@ -120,39 +124,67 @@ class RunPayrollDispatch(MainDispatch):
     def run(arr: list):
         system.run_today_payroll()
 
-# TODO exception handling of id and hours
 class LaunchTimecardDispatch(MainDispatch):
     def run(arr: list):
-        system.launch_timecard(int(arr[0]), int(arr[1]))
+        try:
+            id = int(arr[0])
+            hours = int(arr[1])
+        except:
+            print('Invalid values, must be integer')
+            return
 
-# TODO exception handling of id and charge
+        system.launch_timecard(id, hours)
+
 class LaunchServiceChargeDispatch(MainDispatch):
     def run(arr: list):
-        system.launch_service_charge(int(arr[0]), int(arr[1]))
+        try:
+            id = int(arr[0])
+            charge = int(arr[1])
+        except:
+            print('Invalid values, must be integer')
+            return
+        system.launch_service_charge(id, charge)
 
-# TODO exception handling of id and selling result
 class LaunchSellResultDispatch(MainDispatch):
     def run(arr: list):
-        system.launch_selling(int(arr[0]), int(arr[1]), arr[2])
+        try:
+            id = int(arr[0])
+            selling = int(arr[1])
+        except:
+            print('Invalid values, must be integer')
+            return
+        system.launch_selling(id, selling, arr[2])
 
-# TODO exception handling of id 
 class ChangeEmployeeDataDispatch(MainDispatch):
     def run(arr: list):
-        system.change_employee_data(int(arr[0]), {arr[1]: unify_string(2, len(arr), arr)})
+        try:
+            id = int(arr[0])
+        except:
+            print('Invalid values, must be integer')
+            return
+        system.change_employee_data(id, {arr[1]: unify_string(2, len(arr), arr)})
 
-# TODO exception handling of id
 class ChangeEmployeeTypeDispatch(MainDispatch):
     def run(arr: list):
         type = arr[1].lower()
         if type not in types:
             invalid_employee_type()
         else:
-            system.change_employee_type(int(arr[0]), type)
+            try:
+                id = int(arr[0])
+            except:
+                print('Invalid values, must be integer')
+                return
+            system.change_employee_type(id, type)
 
-# TODO exception handling of id
 class ChangePaymentScheduleDispatch(MainDispatch):
     def run(self, arr: list):
-        system.change_payment_schedule(int(arr[0]), unify_string(4, len(arr), arr))
+        try:
+            id = int(arr[0])
+        except:
+            print('Invalid values, must be integer')
+            return
+        system.change_payment_schedule(id, unify_string(4, len(arr), arr))
 
 class Spec:
     def __init__(self, dispatch: MainDispatch, command: str, lenght: int, is_ge: bool):
