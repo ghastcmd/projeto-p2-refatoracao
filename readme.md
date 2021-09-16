@@ -36,7 +36,7 @@ O objetivo do trabalho é refatorar o [projeto inicial] de projeto da disciplina
   - Adicionado uma classe para a anteriormente primitiva classe `calendar` na classe *Payroll*, que antes era feita somente de primitivas, agora está em uma classe separada.
 
 - **Command Design Pattern**
-  - Adicionado um esquema de interpreter no módulo *payroll* na classe **Payroll** na função `change_employee_data`, esquema em que se interpreta uma string dada no terceiro parâmetro, e para executar a linha utiliza-se polimorfismo para a resguarda das funções.
+  - Adicionado um esquema no módulo *payroll* na classe **Payroll** na função `change_employee_data`, esquema em que se interpreta uma string dada no terceiro parâmetro, e para executar a linha utiliza-se polimorfismo para a resguarda das funções.
 
 - **Interpreter Design Pattern**
   - Adicionado um intepreter design pattern no módulo *main* na parte de input do usuário.

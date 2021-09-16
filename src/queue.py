@@ -54,6 +54,7 @@ class QueueSystem:
     def run_today_payroll(self):
         payroll = self.update_get_payroll()
         payroll.run_today_payroll()
+        payroll.update_day()
         self.state_save.append(payroll)
 
     def update_day(self):

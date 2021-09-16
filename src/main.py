@@ -178,13 +178,13 @@ class ChangeEmployeeTypeDispatch(MainDispatch):
             system.change_employee_type(id, type)
 
 class ChangePaymentScheduleDispatch(MainDispatch):
-    def run(self, arr: list):
+    def run(arr: list):
         try:
             id = int(arr[0])
         except:
             print('Invalid values, must be integer')
             return
-        system.change_payment_schedule(id, unify_string(4, len(arr), arr))
+        system.change_payment_schedule(id, unify_string(1, len(arr), arr))
 
 class Spec:
     def __init__(self, dispatch: MainDispatch, command: str, lenght: int, is_ge: bool):
@@ -268,7 +268,7 @@ if __name__ == '__main__':
 
     while True:
         input_str = input('> ')
-        input_split = input_str.split(' ')
+        input_split = input_str.strip().split(' ')
 
         gotten = False
         for spec in cli.list:
@@ -276,8 +276,6 @@ if __name__ == '__main__':
                 if spec.is_satisfied(len(input_split)):
                     gotten = True
                     word_count = spec.get_command_word_count()
-
-                    print(input_split[word_count:])
 
                     spec.get_dispatch().run(input_split[word_count:])
                 break
